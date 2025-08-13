@@ -17,10 +17,10 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
-//! Hardcoded values (not recommended for production)
-//! Highly recommended to move all Firecrawl API calls to the backend (e.g. Next.js API route)
-const FIRECRAWL_API_URL = "https://api.firecrawl.dev"; // Replace with your actual API URL whether it is local or using Firecrawl Cloud
-const FIRECRAWL_API_KEY = "fc-YOUR_API_KEY"; // Replace with your actual API key
+//! Configuration for local deployment
+//! API calls are proxied through nginx to the backend service
+const FIRECRAWL_API_URL = ""; // Use relative path for local API
+const FIRECRAWL_API_KEY = ""; // No API key needed for local deployment
 
 interface FormData {
   url: string;

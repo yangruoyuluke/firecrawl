@@ -2,6 +2,14 @@
   "name": "firecrawl",
   "services": [
     {
+      "name": "ui",
+      "dockerfile": "apps/ui/ingestion-ui/Dockerfile",
+      "port": 80,
+      "env": {
+        "API_URL": "http://api:3002"
+      }
+    },
+    {
       "name": "api",
       "dockerfile": "apps/api/Dockerfile",
       "port": 3002,

@@ -81,6 +81,17 @@ spec:
       icon: https://cdn.jsdelivr.net/gh/zeabur/service-icons/marketplace/redis.svg
       template: REDIS
       
+    - name: ui
+      icon: https://raw.githubusercontent.com/mendableai/firecrawl/main/apps/www/public/logo.png
+      source:
+        image: ghcr.io/mendableai/firecrawl-ui:latest
+      ports:
+        - id: web
+          port: 80
+          type: HTTP
+      env:
+        API_URL: http://api:3002
+        
     - name: playwright-service
       icon: https://cdn.jsdelivr.net/gh/microsoft/playwright/utils/docker/Dockerfile.jammy
       source:

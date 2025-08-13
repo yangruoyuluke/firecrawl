@@ -43,6 +43,7 @@ BULL_AUTH_KEY=your-custom-admin-key
 ## 🎯 功能特性
 
 - ✅ **完整的 Firecrawl API**: 支持 scrape、crawl、map、search、extract 等所有功能
+- ✅ **Web 用户界面**: 提供友好的 Web 界面进行网页抓取和爬取
 - ✅ **OpenRouter 集成**: 使用 OpenRouter API 访问多种 AI 模型
 - ✅ **自动扩缩容**: Zeabur 自动根据负载调整资源
 - ✅ **内置 Redis**: 包含 Redis 缓存服务
@@ -109,9 +110,18 @@ curl -X POST https://your-app.zeabur.app/v1/scrape \
     }'
 ```
 
-## 🎛️ 管理面板
+## 🌐 Web 界面
 
-访问 `https://your-app.zeabur.app/admin/{BULL_AUTH_KEY}/queues` 查看队列状态和任务管理。
+部署完成后，您可以通过以下方式访问：
+
+### 用户界面
+访问 `https://your-ui-app.zeabur.app` 使用友好的 Web 界面进行网页抓取和爬取。
+
+### 管理面板
+访问 `https://your-api-app.zeabur.app/admin/{BULL_AUTH_KEY}/queues` 查看队列状态和任务管理。
+
+### API 端点
+直接访问 `https://your-api-app.zeabur.app/v1/` 使用 REST API。
 
 ## 💰 成本优化
 

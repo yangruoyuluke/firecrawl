@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -109,7 +109,7 @@ export default function FirecrawlComponent() {
     if (loading) {
       setShowCrawlStatus(true);
       timer = setInterval(() => {
-        setElapsedTime((prevTime) => prevTime + 1);
+        setElapsedTime((prevTime: number) => prevTime + 1);
       }, 1000);
     }
     return () => {
@@ -290,7 +290,7 @@ export default function FirecrawlComponent() {
 
         const data: ScrapeResult = await response.json();
         newScrapeResults[url] = data;
-        setCrawlStatus((prev) => ({ ...prev, current: index + 1 }));
+        setCrawlStatus((prev: { current: number; total: number | null }) => ({ ...prev, current: index + 1 }));
         setScrapeResults({ ...scrapeResults, ...newScrapeResults });
       } catch (error) {
         console.error(`Error scraping ${url}:`, error);
@@ -516,7 +516,7 @@ export default function FirecrawlComponent() {
                       <Checkbox
                         id="selectAll"
                         checked={selectedUrls.length === crawledUrls.length}
-                        onCheckedChange={(checked) => {
+                        onCheckedChange={(checked: boolean) => {
                           if (checked) {
                             setSelectedUrls([...crawledUrls]);
                           } else {
@@ -556,7 +556,7 @@ export default function FirecrawlComponent() {
                       <Checkbox
                         checked={selectedUrls.includes(url)}
                         onCheckedChange={() =>
-                          setSelectedUrls((prev) =>
+                          setSelectedUrls((prev: string[]) =>
                             prev.includes(url)
                               ? prev.filter((u) => u !== url)
                               : [...prev, url]

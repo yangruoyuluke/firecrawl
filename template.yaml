@@ -1,0 +1,144 @@
+apiVersion: zeabur.com/v1
+kind: Template
+metadata:
+  name: firecrawl-openrouter
+spec:
+  description: 🔥 Firecrawl - Turn websites into LLM-ready data with OpenRouter AI
+  icon: https://raw.githubusercontent.com/mendableai/firecrawl/main/apps/www/public/logo.png
+  tags:
+    - AI
+    - Web Scraping
+    - Data Extraction
+    - OpenRouter
+    - LLM
+  readme: |
+    # 🔥 Firecrawl with OpenRouter
+    
+    Turn any website into LLM-ready markdown or structured data. Firecrawl crawls and converts any website into clean markdown or structured data.
+    
+    ## Features
+    - 🔥 **Advanced Web Scraping**: Extract clean, LLM-ready markdown from any website
+    - 🕷️ **Smart Crawling**: Crawl entire websites with intelligent link discovery
+    - 🗺️ **Site Mapping**: Generate comprehensive sitemaps
+    - 🔍 **Semantic Search**: Search websites with natural language queries
+    - 🧠 **AI Data Extraction**: Extract structured data using OpenRouter AI models
+    - 🎭 **Dynamic Content**: Handle JavaScript-heavy sites with Playwright
+    
+    ## Quick Start
+    1. Set your `OPENROUTER_API_KEY` environment variable
+    2. Deploy and start scraping!
+    
+    ## API Endpoints
+    - `POST /v1/scrape` - Scrape a single URL
+    - `POST /v1/crawl` - Crawl an entire website
+    - `POST /v1/map` - Generate a sitemap
+    - `POST /v1/search` - Search website content
+    
+    Get your OpenRouter API key at: https://openrouter.ai/
+  
+  variables:
+    - key: OPENROUTER_API_KEY
+      name: OpenRouter API Key
+      description: Your OpenRouter API key for AI-powered data extraction
+      type: PASSWORD
+      default: ""
+    - key: MODEL_NAME
+      name: AI Model
+      description: The AI model to use for data extraction
+      type: SELECT
+      options:
+        - value: openai/gpt-4o-mini
+          label: GPT-4o Mini (Recommended)
+        - value: openai/gpt-4o
+          label: GPT-4o
+        - value: openai/gpt-3.5-turbo
+          label: GPT-3.5 Turbo
+        - value: anthropic/claude-3-haiku
+          label: Claude 3 Haiku
+        - value: anthropic/claude-3-sonnet
+          label: Claude 3 Sonnet
+        - value: google/gemini-pro
+          label: Gemini Pro
+      default: openai/gpt-4o-mini
+    - key: BULL_AUTH_KEY
+      name: Admin Panel Key
+      description: Authentication key for the admin panel
+      type: PASSWORD
+      default: firecrawl-admin
+    - key: HTTP_REFERER
+      name: Site URL (Optional)
+      description: Your site URL for OpenRouter rankings
+      type: STRING
+      default: ""
+    - key: X_TITLE
+      name: Site Name (Optional)
+      description: Your site name for OpenRouter rankings
+      type: STRING
+      default: ""
+
+  services:
+    - name: redis
+      icon: https://cdn.jsdelivr.net/gh/zeabur/service-icons/marketplace/redis.svg
+      template: REDIS
+      
+    - name: playwright-service
+      icon: https://cdn.jsdelivr.net/gh/microsoft/playwright/utils/docker/Dockerfile.jammy
+      source:
+        image: browserless/chromium:latest
+      ports:
+        - id: web
+          port: 3000
+          type: HTTP
+      env:
+        CONCURRENT: 10
+        TOKEN: firecrawl-playwright
+        
+    - name: api
+      icon: https://raw.githubusercontent.com/mendableai/firecrawl/main/apps/www/public/logo.png
+      source:
+        image: ghcr.io/mendableai/firecrawl:latest
+      ports:
+        - id: web
+          port: 3002
+          type: HTTP
+      env:
+        PORT: 3002
+        HOST: 0.0.0.0
+        USE_DB_AUTHENTICATION: false
+        REDIS_URL: ${ZEABUR_REDIS_CONNECTION_STRING}
+        REDIS_RATE_LIMIT_URL: ${ZEABUR_REDIS_CONNECTION_STRING}
+        PLAYWRIGHT_MICROSERVICE_URL: http://${ZEABUR_PLAYWRIGHT_SERVICE_DOMAIN}:3000/scrape
+        OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+        OPENAI_API_KEY: ${OPENROUTER_API_KEY}
+        OPENAI_BASE_URL: https://openrouter.ai/api/v1
+        MODEL_NAME: ${MODEL_NAME}
+        BULL_AUTH_KEY: ${BULL_AUTH_KEY}
+        HTTP_REFERER: ${HTTP_REFERER}
+        X_TITLE: ${X_TITLE}
+        ENV: production
+        LOGGING_LEVEL: info
+      volumes:
+        - id: data
+          dir: /app/data
+      
+    - name: worker
+      icon: https://raw.githubusercontent.com/mendableai/firecrawl/main/apps/www/public/logo.png
+      source:
+        image: ghcr.io/mendableai/firecrawl:latest
+      command: ["pnpm", "run", "workers"]
+      env:
+        USE_DB_AUTHENTICATION: false
+        REDIS_URL: ${ZEABUR_REDIS_CONNECTION_STRING}
+        REDIS_RATE_LIMIT_URL: ${ZEABUR_REDIS_CONNECTION_STRING}
+        PLAYWRIGHT_MICROSERVICE_URL: http://${ZEABUR_PLAYWRIGHT_SERVICE_DOMAIN}:3000/scrape
+        OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+        OPENAI_API_KEY: ${OPENROUTER_API_KEY}
+        OPENAI_BASE_URL: https://openrouter.ai/api/v1
+        MODEL_NAME: ${MODEL_NAME}
+        HTTP_REFERER: ${HTTP_REFERER}
+        X_TITLE: ${X_TITLE}
+        ENV: production
+        LOGGING_LEVEL: info
+      volumes:
+        - id: data
+          dir: /app/data

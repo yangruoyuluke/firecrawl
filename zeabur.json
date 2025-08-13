@@ -1,0 +1,51 @@
+{
+  "name": "firecrawl",
+  "services": [
+    {
+      "name": "api",
+      "dockerfile": "apps/api/Dockerfile",
+      "port": 3002,
+      "env": {
+        "PORT": "3002",
+        "HOST": "0.0.0.0",
+        "USE_DB_AUTHENTICATION": "false",
+        "BULL_AUTH_KEY": "firecrawl-admin",
+        "REDIS_URL": "redis://redis:6379",
+        "REDIS_RATE_LIMIT_URL": "redis://redis:6379",
+        "PLAYWRIGHT_MICROSERVICE_URL": "http://playwright-service:3000/scrape",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
+        "OPENAI_BASE_URL": "https://openrouter.ai/api/v1",
+        "MODEL_NAME": "openai/gpt-4o-mini"
+      }
+    },
+    {
+      "name": "worker",
+      "dockerfile": "apps/api/Dockerfile",
+      "command": ["pnpm", "run", "workers"],
+      "env": {
+        "USE_DB_AUTHENTICATION": "false",
+        "BULL_AUTH_KEY": "firecrawl-admin",
+        "REDIS_URL": "redis://redis:6379",
+        "REDIS_RATE_LIMIT_URL": "redis://redis:6379",
+        "PLAYWRIGHT_MICROSERVICE_URL": "http://playwright-service:3000/scrape",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
+        "OPENAI_BASE_URL": "https://openrouter.ai/api/v1",
+        "MODEL_NAME": "openai/gpt-4o-mini"
+      }
+    },
+    {
+      "name": "playwright-service",
+      "dockerfile": "apps/playwright-service-ts/Dockerfile",
+      "port": 3000,
+      "env": {
+        "PORT": "3000"
+      }
+    },
+    {
+      "name": "redis",
+      "image": "redis:alpine",
+      "port": 6379,
+      "command": ["redis-server", "--bind", "0.0.0.0"]
+    }
+  ]
+}

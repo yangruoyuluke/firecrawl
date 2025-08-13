@@ -12,6 +12,9 @@
     "start:dev": "tsc-watch --onSuccess \"node dist/src/index.js\"",
     "build": "tsc",
     "build:nosentry": "tsc",
+    "build:zeabur": "tsc",
+    "start:zeabur": "node dist/src/index.js",
+    "workers:zeabur": "node dist/src/services/queue-worker.js",
     "test": "npx jest --detectOpenHandles --forceExit --openHandlesTimeout=120000 --watchAll=false --testPathIgnorePatterns='src/__tests__/e2e_noAuth/*'",
     "test:local-no-auth": "npx jest --detectOpenHandles --forceExit --openHandlesTimeout=120000 --watchAll=false --testPathIgnorePatterns='src/__tests__/e2e_withAuth/*'",
     "test:full": "npx jest --detectOpenHandles --forceExit --openHandlesTimeout=120000 --watchAll=false --testPathIgnorePatterns='(src/__tests__/e2e_noAuth|src/__tests__/e2e_withAuth)'",
@@ -27,6 +30,7 @@
     "run-example": "npx ts-node src/example.ts",
     "deploy:fly": "flyctl deploy --build-secret SENTRY_AUTH_TOKEN=$(dotenv -p SENTRY_AUTH_TOKEN) --depot=false",
     "deploy:fly:staging": "fly deploy -c fly.staging.toml --depot=false",
+    "deploy:zeabur": "echo 'Ready for Zeabur deployment! Make sure to set OPENROUTER_API_KEY environment variable.'",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org caleb-peffer --project firecrawl-scraper-js ./dist && sentry-cli sourcemaps upload --org caleb-peffer --project firecrawl-scraper-js ./dist"
   },
   "author": "",
